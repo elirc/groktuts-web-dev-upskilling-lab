@@ -1,0 +1,44 @@
+{
+  "name": "web-dev-upskilling-lab",
+  "version": "1.0.0",
+  "description": "Structured hands-on lab to go from beginner to junior/mid-level in JavaScript, TypeScript, and React. Real-world examples, lessons, drills, tests, and projects.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:js && npm run test:ts && npm run test:react",
+    "test:js": "node --test practice/js/**/tests.js",
+    "test:ts": "npm run typecheck && echo 'TypeScript type checks passed'",
+    "test:react": "vitest run --config vitest.config.js",
+    "test:learn": "node --test practice/js/**/tests.js practice/js/**/starter.js || echo 'Note: starter tests expected to show failures for practice mode'",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:watch": "tsc --noEmit -p tsconfig.json --watch",
+    "dev:js": "node javascript/examples/run-all.js",
+    "dev:ts": "node --loader ts-node/esm typescript/examples/run-all.ts || echo 'Use tsx for TS examples if needed'",
+    "start:movie-watchlist": "node projects/movie-watchlist/index.js",
+    "build:react-dashboard": "cd projects/support-ticket-dashboard && npm run build || echo 'See React project README for Vite setup notes'"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^26.0.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "react",
+    "learning",
+    "upskilling",
+    "tutorial",
+    "drills",
+    "web-development"
+  ],
+  "author": "web-dev-upskilling-lab",
+  "license": "MIT"
+}

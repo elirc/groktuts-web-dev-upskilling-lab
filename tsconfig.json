@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "rootDir": ".",
+    "noEmit": true,
+    "baseUrl": ".",
+    "types": ["node", "react", "react-dom"],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "typescript/**/*.ts",
+    "typescript/**/*.tsx",
+    "react/**/*.ts",
+    "react/**/*.tsx",
+    "practice/ts/**/*.ts",
+    "practice/ts/**/*.tsx",
+    "practice/react/**/*.ts",
+    "practice/react/**/*.tsx",
+    "projects/**/*.ts",
+    "projects/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/starter.ts",
+    "projects/support-ticket-dashboard/src"
+  ]
+}

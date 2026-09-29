@@ -1,0 +1,51 @@
+[
+  {
+    "id": 101,
+    "title": "The Matrix",
+    "year": 1999,
+    "rating": 8.7,
+    "watched": false
+  },
+  {
+    "id": 102,
+    "title": "Dune",
+    "year": 2021,
+    "rating": 8,
+    "watched": false
+  },
+  {
+    "id": 103,
+    "title": "Inception",
+    "year": 2010,
+    "rating": 8.8,
+    "watched": false
+  },
+  {
+    "id": 104,
+    "title": "Everything Everywhere All at Once",
+    "year": 2022,
+    "rating": 8.8,
+    "watched": false
+  },
+  {
+    "id": 105,
+    "title": "The Prestige",
+    "year": 2006,
+    "rating": 8.5,
+    "watched": false
+  },
+  {
+    "id": 1782430723223,
+    "title": "The Batman",
+    "year": 2022,
+    "rating": 7.8,
+    "watched": false
+  },
+  {
+    "id": 1782430723225,
+    "title": "Bad",
+    "year": 1,
+    "rating": 7,
+    "watched": false
+  }
+]
