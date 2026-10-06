@@ -2,7 +2,37 @@
 
 **Focus:** React, TypeScript, Node.js, and modern full-stack web development.
 
-This file contains 70+ high-quality questions commonly asked in mid-to-senior frontend/fullstack interviews. Answers are concise but demonstrate depth (what interviewers actually want to hear).
+80 questions. Questions 1–31 have short model answers. 32–80 are prompts only: write your own answer, then check it against the lesson in the table below. The Node.js section (21–30) and most of 52–75 go beyond this lab, which has no Node or backend lessons.
+
+## Where the Lab Covers Each Topic
+
+Answer from code you've read. An answer that points at a real file is worth more in an interview than a recited definition.
+
+| Questions | Lesson | Code in this lab to cite |
+|---|---|---|
+| 1 controlled inputs | `react/09-lesson` | `projects/support-ticket-dashboard/src/components/TicketForm.tsx:36-37` (`value` + `onChange`) |
+| 2, 42 `useEffect` | `react/10-lesson` | `hooks/useLocalStorage.ts:13-17` (effect with `[key, value]` deps) |
+| 3, 41 keys | `react/08-lesson` | `components/TicketList.tsx:22` (`key={ticket.id}`) |
+| 4, 5 memoization | `react/16-lesson` | `SupportTicketDashboard.tsx:28-34` (`useMemo` for derived counts) |
+| 7 custom hooks | `react/13-lesson` | `hooks/useLocalStorage.ts` |
+| 9, 69 Context | `react/15-lesson` | — |
+| 10 Suspense | `react/21-lesson` | — |
+| 45 error boundaries | `react/17-lesson` | — |
+| 47 `useReducer` | `react/14-lesson` | `ticketReducer.ts` |
+| 12 `keyof` / indexed access | `typescript/14-lesson` | — |
+| 13 discriminated unions | `typescript/12-lesson` | `ticketReducer.ts:3-6` (`Action` union on `type`) |
+| 14 utility types | `typescript/15-lesson` | `ticketReducer.ts:4` (`Omit<Ticket, "id" \| "createdAt">`), `practice/ts/utility-types/` |
+| 15 generics | `typescript/13-lesson` | `practice/ts/generics/`, `useLocalStorage<T>` |
+| 16 declaration merging | `typescript/22-lesson` | — |
+| 18 branded types | `typescript/18-lesson` | — |
+| 19 conditional types | `typescript/17-lesson` | — |
+| 21 event loop | `javascript/33-lesson` (browser event loop; Node's phases aren't covered) | — |
+| 58, 59 XSS, CSP | `javascript/39-lesson` | — |
+
+**Practice (Goal + Check).**
+1. *Goal:* answer Q13 with this lab's reducer. **Check:** in two sentences, explain why inside `case "UPDATE_STATUS":` (`ticketReducer.ts:22`) TypeScript lets you read `action.status` but not `action.ticket`.
+2. *Goal:* answer Q2 with a real dependency array. **Check:** say what would go wrong if `useLocalStorage`'s effect (`hooks/useLocalStorage.ts:17`) used `[]` instead of `[key, value]`, and which user action would expose it.
+3. *Goal:* answer Q1 and find an accessibility gap at the same time. **Check:** name the one form control in `SupportTicketDashboard.tsx` with no label (`:52`), and the fix.
 
 ---
 
@@ -19,7 +49,7 @@ Controlled is preferred for most cases because it gives you full control for val
 ### 2. Explain the useEffect dependency array. What happens with different values?
 
 **Answer:**
-- `[]` — runs once after mount (like `componentDidMount`).
+- `[]` — runs once after mount (like `componentDidMount`). In development under `<StrictMode>`, React 18+ deliberately mounts, unmounts and remounts, so it runs twice there. Write the cleanup so that's harmless.
 - `[dep1, dep2]` — runs when any dependency changes.
 - No array — runs after every render (usually a bug).
 - Missing dependencies is one of the most common sources of stale closures.
@@ -183,7 +213,7 @@ type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 ### 21. Explain the Node.js event loop.
 
 **Answer:**
-Single-threaded event loop with phases: timers, pending callbacks, idle/prepare, poll, check, close callbacks. Microtasks (promises) run between phases.
+Single-threaded event loop with phases: timers, pending callbacks, idle/prepare, poll, check, close callbacks. The `process.nextTick` queue and then the promise microtask queue are drained after each callback (since Node 11), not just between phases.
 
 ### 22. What is the difference between `process.nextTick`, `setImmediate`, and `setTimeout`?
 

@@ -8,7 +8,7 @@ The goal is to move beyond basic feature implementation into real architectural 
 
 ## 1. Starting Point: The Support Ticket Dashboard (Core Example)
 
-The Support Ticket Dashboard from the React final project starts simple: a list of tickets, filters by status and priority, a controlled form to create new tickets, local state with useState and useReducer variants, a custom hook for localStorage persistence, derived counts, and accessibility considerations.
+The Support Ticket Dashboard from the React final project (`projects/support-ticket-dashboard/src/`) starts simple: a list of tickets, a status filter, a controlled form to create new tickets (`components/TicketForm.tsx`), list state in `useReducer` (`ticketReducer.ts`), a custom hook for localStorage persistence (`hooks/useLocalStorage.ts`), derived counts with `useMemo`, and some ARIA labelling. Read those five files before this document. Every section below asks what breaks in them at a larger scale.
 
 At small scale (single user, <100 tickets), this is trivial. React manages everything in memory or localStorage. No backend is strictly needed. But as soon as we ask realistic questions—"What if this is used by a 50-person support team? What if tickets number in the tens of thousands? What if we need real-time updates when a colleague assigns a ticket?"—the design problem explodes.
 
@@ -23,6 +23,13 @@ Key requirements that emerge:
 - Analytics: average resolution time, ticket volume by priority, agent performance.
 
 The React frontend we built (with TicketForm, TicketList, useReducer, and localStorage hook) becomes just the presentation layer. We now need to design the full stack.
+
+Two details in the current code already show the first scaling problems:
+
+- **IDs come from the clock.** `ticketReducer.ts:17` sets `id: Date.now()`. Two tickets created in the same millisecond, or by two users, collide. A server-assigned ID (or a client UUID) is the first change any multi-user version needs.
+- **Persistence is last-writer-wins per browser.** `SupportTicketDashboard.tsx:13-15` copies the whole ticket array into `localStorage` on every change. Two tabs overwrite each other silently, which is the single-machine version of the concurrent-update problem that the `version`/`updatedAt` column in section 2 and the optimistic locking in section 14 exist to solve.
+
+*Exercise (Goal + Check):* make the collision visible. **Check:** write a unit test that dispatches two `ADD` actions to `ticketReducer` with `Date.now` stubbed to a constant (`vi.spyOn(Date, "now").mockReturnValue(1)`), and assert the two tickets have different IDs. It fails today. Then decide what the fix is and where the ID should come from.
 
 ---
 
@@ -362,9 +369,9 @@ Every one of these steps can (and should) be designed, implemented, tested, and 
 
 ---
 
-## 19-50. Additional Deep Dive Sections (Condensed for Breadth)
+## 19. Topics Not Covered Here
 
-Further sections in a full treatment would expand on:
+These are prompts, not sections. Pick one, and write a one-page design for it using the questions in the paragraph after the list:
 
 - Designing the recommendation engine for the movie watchlist (collaborative filtering vs content-based, where Python shines).
 - Handling recurring habits and streak calculations reliably even with timezone issues and backfills (time-series patterns in Postgres).
@@ -391,16 +398,6 @@ Further sections in a full treatment would expand on:
 - Team structure: how to organize backend, frontend, data, and platform teams around these domains.
 
 Each of these could be a multi-page design document on its own. The key skill is learning to ask the right questions early: What are the access patterns? What are the consistency requirements? What will break first when we grow 10x? How do the different example domains (tickets, movies, habits, finance, events) share or diverge in their needs?
-
-By studying the concrete implementations in the practice projects and then repeatedly asking "what if this had to serve 10,000 concurrent users across 50 teams with strict SLAs?", you develop the intuition that distinguishes junior from mid-level and senior engineers.
-
-This document intentionally mixes the examples from JavaScript/React, TypeScript, Python, C#/.NET, and SQL/Postgres labs so you see the patterns that are universal versus the technology-specific implementation details.
-
----
-
-End of core deep dives. In a real interview or design session you would draw diagrams, discuss trade-offs out loud, and poke at the weakest assumptions. The practice of expanding a simple local demo (like the ones built in these labs) into a production-grade system is one of the fastest ways to level up your system design skills.
-
----
 
 # 20 System Design Diagrams
 

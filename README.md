@@ -2,6 +2,13 @@
 
 A complete, hands-on curriculum to take a beginner SWE to junior (and start of mid-level) capability in modern web development. Focus on **JavaScript**, **TypeScript**, and **React** using realistic, varied domains — no todo lists or shopping carts.
 
+> **Standalone copy.** This repo is the `web-dev-upskilling-lab/` folder of
+> [elirc/grok-tuts](https://github.com/elirc/grok-tuts), and the code was
+> identical to that folder when checked on 2026-10-06. Where these docs mention
+> the Python, SQL or .NET labs (for example the Habit/Finance Tracker in
+> `system-design-deep-dives.md`), those live in grok-tuts. Doc fixes are made in
+> both repos.
+
 ## Who This Is For
 
 - Complete beginners who know basic programming concepts and want to learn web dev properly.
@@ -23,42 +30,39 @@ A complete, hands-on curriculum to take a beginner SWE to junior (and start of m
 
 ## Repository Structure
 
+Counted on 2026-10-06:
+
 ```
 web-dev-upskilling-lab/
-├── README.md
-├── package.json
-├── .gitignore
-├── tsconfig.json
-├── vitest.config.js
-├── javascript/
-│   ├── 01-lesson/ ... 40 lessons (explanations + runnable examples + challenges)
-│   └── examples/ (extra runnable demos)
-├── typescript/
-│   ├── 01-lesson/ ... 20 lessons (support ticket / recipe / event planner examples)
-│   └── examples/
-├── react/
-│   ├── 01-lesson/ ... 20 lessons
-│   └── examples/
+├── README.md, interview-questions.md, system-design-deep-dives.md
+├── package.json, tsconfig.json, vitest.config.js, vitest.setup.js
+├── javascript/   44 lessons: 01-39 and 41-45 (there is no 40)
+│                 example.js in all but 43 and 45
+├── typescript/   22 lessons, example.ts in 01-21
+├── react/        23 lessons, example.jsx in all but 20 (20 points at the final project)
 ├── practice/
-│   ├── js/
-│   │   ├── arrays/, objects/, functions/, closures/, async/, dom-browser/
-│   ├── ts/
-│   │   ├── types-basics/, generics/, narrowing/, utility-types/
-│   └── react/
-│       ├── components-props/, state-effects/, forms/, custom-hooks/
-│   (each contains: README.md, starter.js|tsx, solution.js|tsx, expected-output.md, tests.js|test.tsx)
-├── projects/
-│   ├── movie-watchlist/          (Vanilla JS final project)
-│   └── support-ticket-dashboard/ (React final project)
+│   ├── js/     arrays, objects, functions, closures, async, dom-browser
+│   │           starter.js + solution.js + tests.js in each; README.md in
+│   │           arrays/async/closures/dom-browser; expected-output.md in
+│   │           arrays/functions/objects
+│   ├── ts/     types-basics, generics, narrowing, utility-types
+│   │           starter.ts + solution.ts + tests.ts (type-checked only, see below)
+│   └── react/  components-props, state-effects, forms, custom-hooks
+│               README.md + starter.tsx + solution.tsx + tests.test.tsx
+└── projects/
+    ├── movie-watchlist/          index.js + watchlist-data.json (Node script)
+    └── support-ticket-dashboard/ src/ only, no package.json of its own
 ```
+
+There are no `javascript/examples/`, `typescript/examples/` or `react/examples/`
+folders, so `npm run dev:js` and `npm run dev:ts` fail as written.
 
 ## How to Run Examples
 
-- JavaScript lessons: `node javascript/XX-lesson/example.js`
-- Many lessons contain self-contained runnable scripts.
-- For aggregated JS examples: `npm run dev:js`
-- TypeScript: compile or use `npx tsx typescript/XX-lesson/example.ts` (install tsx if desired)
-- React lessons: Code examples are self-documenting. The final project is a full app.
+- JavaScript lessons: `node javascript/XX-lesson/example.js`. No install needed.
+- TypeScript lessons: `npx tsx typescript/XX-lesson/example.ts` (downloads `tsx` on first use).
+- React lessons: the `example.jsx` files are for reading. Nothing in the lab
+  renders them on their own.
 
 ## How to Run Tests
 
@@ -71,9 +75,34 @@ npm run test:react       # React component tests (vitest)
 npm run typecheck        # Standalone TS type check
 ```
 
-Tests are designed so:
-- Running against **solution** files → all pass with green output.
-- Running against **starter** files (before implementing) → clear, actionable failures.
+What the tests actually check (verified 2026-10-06):
+
+- **Every test file imports `./solution.*`, not `./starter.*`.** To test your own
+  work, change the import line at the top of that drill's test file to
+  `./starter.js` (or `./starter`), run it, and change it back before committing.
+  The `test:learn` script doesn't do this: it runs `starter.js` files as test
+  files, and they contain no tests.
+- **JS drills run with no install:** `node --test practice/js/*/tests.js`. On
+  2026-10-06 this reported `# pass 19`, `# fail 2`. The two failures are bugs in
+  the lab, not in your setup: `practice/js/async/solution.js` declares
+  `allSettledPolyfill` twice (lines 39 and 116), and
+  `practice/js/functions/solution.js` declares `once` (lines 17 and 55) and
+  `throttle` (lines 24 and 50) twice, so both files fail to load with
+  `SyntaxError`. `practice/js/functions/starter.js` has the same two duplicates
+  (`throttle` on lines 5 and 21, `once` on lines 6 and 19).
+- **TS drills are type-checked, not executed.** `tests.ts` imports
+  `./solution.js`, which doesn't exist until you compile, so `npm run test:ts` is
+  just `tsc --noEmit`.
+- **React drills and the dashboard** need `npm install`, then `npm run test:react`.
+
+**First exercise: make the suite green.**
+*Goal:* fix the two broken drills. Delete the second, duplicate declaration in
+each file, after reading both versions and keeping the better one.
+**Check:** `node --check practice/js/async/solution.js`,
+`node --check practice/js/functions/solution.js` and
+`node --check practice/js/functions/starter.js` print nothing, and
+`node --test practice/js/*/tests.js` reports `# fail 0` (24 passing when
+checked against a fixed copy).
 
 ## Starter / Solution Files
 
@@ -94,15 +123,15 @@ Tests are designed so:
 - Practice closures, async, dom-browser
 
 **Week 4: Advanced JS + Mini Project**
-- Lessons 29-40 (closures, classes, modules, performance, security)
+- Lessons 29-39 and 41-45 (closures, classes, modules, event loop, performance, security, service workers, proxies, error handling)
 - Complete the Personal Movie Watchlist Dashboard in `projects/movie-watchlist`
 
 **Week 5: TypeScript Basics**
-- All 20 TS lessons + practice/ts/*
+- All 22 TS lessons + practice/ts/*
 - Focus on narrowing, generics, utility types (huge for real jobs)
 
 **Week 6-7: React**
-- All 20 React lessons + practice/react/*
+- All 23 React lessons + practice/react/*
 - Master hooks deeply: useState, useEffect, useReducer, custom hooks, Context
 
 **Week 8: React Final Project + Integration**
@@ -143,32 +172,51 @@ No generic "todo" or "cart" examples.
 
 ## Final Projects
 
-1. **javascript/projects/movie-watchlist** (or projects/movie-watchlist)
-   - Full vanilla JS app: list movies, add via form (with validation), toggle watched, filter/search, stats, localStorage, simulated API fetch with error states.
+1. **`projects/movie-watchlist`**
+   - A Node script (`index.js`), not a browser app: it seeds a watchlist from a
+     simulated API, adds and toggles movies, filters, prints stats, and saves to
+     `watchlist-data.json` with `fs.writeFileSync` (it plays the role
+     `localStorage` would in a browser).
+   - Running it **rewrites `watchlist-data.json`**, so run
+     `git checkout -- projects/movie-watchlist/watchlist-data.json` afterwards
+     if you don't want that diff.
 
-2. **react final mini project** inside `projects/support-ticket-dashboard` or react/20
-   - Ticket list + filters (status/priority)
-   - Create form with controlled inputs + validation
-   - Derived counts
-   - Two implementations: useState + useReducer
-   - Custom hook for localStorage persistence
-   - Accessible markup
-   - Full Vitest + React Testing Library tests
+2. **`projects/support-ticket-dashboard`** (react/20 points here)
+   - Ticket list with a **status** filter (there is no priority filter yet)
+   - Create form with controlled inputs + validation (`components/TicketForm.tsx`)
+   - Derived counts with `useMemo` (`SupportTicketDashboard.tsx:28-34`)
+   - One implementation: list state in `useReducer` (`ticketReducer.ts`), form
+     fields in `useState`
+   - Custom `useLocalStorage` hook (`hooks/useLocalStorage.ts`)
+   - Three render-only tests in `SupportTicketDashboard.test.tsx` (header,
+     form controls, filter select). Nothing tests adding a ticket, changing
+     status, or persistence yet.
+
+**Extend the dashboard (Goal + Check).**
+- *Goal:* a priority filter. **Check:** a new test renders three tickets with
+  different priorities, picks `high`, and asserts only one row
+  (`data-testid="ticket-<id>"`, `TicketList.tsx:22`) remains.
+- *Goal:* delete tickets. The reducer already handles `DELETE`
+  (`ticketReducer.ts:28-31`) but nothing dispatches it. **Check:** a test clicks
+  a Delete button and the row disappears.
+- *Goal:* label the status filter. The `<select>` at
+  `SupportTicketDashboard.tsx:52` has no `<label>` or `aria-label`. **Check:**
+  `screen.getByLabelText(/status/i)` finds it in a test.
 
 ## System Design Deep Dives
 
-See `system-design-deep-dives.md` for extensive ~50-paragraph architectural discussions that combine the Movie Watchlist, Support Ticket Dashboard, Habit/Finance Tracker, event systems, and cross-language patterns (React/TS, Python, .NET, Postgres). Covers data modeling, real-time, caching, search, multi-tenancy, background jobs, observability, and scaling.
+See `system-design-deep-dives.md`: 18 sections and 20 Mermaid diagrams that grow the Support Ticket Dashboard (and, more loosely, the Movie Watchlist and the Python lab's Habit/Finance Tracker) into a multi-user system. Covers data modeling, real-time, caching, search, multi-tenancy, background jobs, observability, and scaling. None of it is implemented in this lab, so treat it as interview practice built on code you've already read.
 
 ## Running the Final Projects
 
 ```bash
-# Movie watchlist (vanilla)
+# Movie watchlist (no install needed; rewrites watchlist-data.json)
 npm run start:movie-watchlist
 
-# React dashboard - see its own package/README inside the folder
-cd projects/support-ticket-dashboard
+# React dashboard: tests only. The folder has no package.json or Vite config,
+# so there is no dev server to start yet.
 npm install
-npm run dev
+npm run test:react
 ```
 
 ## Tips for Maximum Gain
@@ -180,16 +228,4 @@ npm run dev
 - Revisit hard lessons after doing the project.
 - When comfortable, delete the solution temporarily and re-implement from memory.
 
-## Quality Notes
-
-This is a real curriculum:
-- Every solution is complete, working code.
-- Tests cover happy paths + edge cases (empty, null, duplicates, invalid, etc.).
-- Explanations aim for clarity without hand-holding.
-- Examples chosen to feel like things you might actually build or maintain on the job.
-
-Start with Lesson 01. Good luck — you've got this.
-
----
-
-Built as a focused, zero-fluff upskilling resource. Run the tests. Build the projects. Ship real skill.
+Start with Lesson 01.
